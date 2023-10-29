@@ -3,12 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
     <title>MA Map</title>
     <style>
         #tooltip {
             position: absolute;
             opacity: 0;
+            top: 0;
+            left: 0;
+            width: auto;
+            padding: 10px;
             background: white;
             font-family: sans-serif;
             font-size: medium;
@@ -17,12 +24,12 @@
         }
 
         path {
-            stroke-width: 0.5px;
+            stroke-width: .5px;
             stroke: black;
         }
 
         path:hover {
-            opacity: 0.6;
+            opacity: .6;
             stroke: black;
             stroke-width: 4px;
         }
@@ -33,18 +40,12 @@
             align-items: center;
             justify-content: center;
         }
-
-        .map {
-            margin: 10px;
-            text-align: center;
-        }
-
         .map svg {
             display: block;
             margin: 0 auto;
             max-width: 100%;
         }
-
+       
         .title {
             text-align: center;
             font-size: 24px;
@@ -60,17 +61,17 @@
 </head>
 
 <body>
-    <div class="title">Major Assignment 2</div>
+    <div class="title"> Major Assignment 2 </div>
     <div class="name">Rithik Porandla</div>
     <div id="tooltip"></div>
     <div class="container">
-        <div class="map fig1"></div>
-        <div class="map fig2"></div>
-        <div class="map fig3"></div>
+        <div class="fig1"></div>
+        <div class="fig2"></div>
+        <div class="fig3"></div>
     </div>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://d3js.org/topojson.v3.min.js"></script>
+
     <script>
+        /*------------------- Window setting --------------------*/
         const window_dims = {
             width: window.innerWidth,
             height: window.innerHeight
@@ -97,7 +98,7 @@
         const gini_index = "data/gini_index.csv";
 
         // Sample county data with FIPS codes
-        const countyData = [
+        const county = [
             {
                 "county": "Barnstable County",
                 "fips_stco": 25001
@@ -169,7 +170,7 @@
             generateMap2(topology_data, ".fig2", svgWidth, svgHeight);
 
             // Generate Map 3 with county data
-            generateMap3(topology_data, ".fig3", svgWidth, svgHeight, countyData);
+            generateMap3(topology_data, ".fig3", svgWidth, svgHeight, county);
         });
 
         // Function to generate Map 1
@@ -200,7 +201,7 @@
                 .on("mouseenter", (d) => {
                     tooltip.transition()
                         .duration(200)
-                        .style("opacity", 0.9);
+                        .style("opacity", .9);
                     tooltip.html(d.properties.TOWN)
                         .style("left", (d3.event.pageX + 10) + "px")
                         .style("top", (d3.event.pageY - 20) + "px");
@@ -245,7 +246,7 @@
                 .on("mouseenter", (d) => {
                     tooltip.transition()
                         .duration(200)
-                        .style("opacity", 0.9);
+                        .style("opacity", .9);
                     tooltip.html(d.properties.TOWN)
                         .style("left", (d3.event.pageX + 10) + "px")
                         .style("top", (d3.event.pageY - 20) + "px");
@@ -263,7 +264,7 @@
         }
 
         // Function to generate Map 3 with county data
-        function generateMap3(topo_data, containerName, width, height, countyData) {
+        function generateMap3(topo_data, containerName, width, height, county) {
             const svg = d3.select(containerName).append("svg")
                 .attr("width", width)
                 .attr("height", height);
@@ -279,8 +280,8 @@
 
             // Create a map of FIPS code to county name for quick lookups
             const countyMap = new Map();
-            countyData.forEach(county => {
-                countyMap.set(county.fips_stco, county.county);
+            county.forEach(countyData => {
+                countyMap.set(countyData.fips_stco, countyData.county);
             });
 
             svg.selectAll("path")
@@ -296,7 +297,7 @@
                 .on("mouseenter", (d) => {
                     tooltip.transition()
                         .duration(200)
-                        .style("opacity", 0.9);
+                        .style("opacity", .9);
                     const fips_stco = d.properties.FIPS_STCO;
                     const countyName = countyMap.get(fips_stco);
                     tooltip.html(countyName || "Unknown County")
@@ -316,7 +317,7 @@
                         .style("opacity", 0);
                 });
         }
+
     </script>
 </body>
-
 </html>
